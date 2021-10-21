@@ -412,3 +412,20 @@ roc_t3c_dm_adp_il1ra_ca199 <- validation %>%
   roc(t3c_dm, t3c_dm_adp_il1ra_ca199_prob)
 auc(roc_t3c_dm_adp_il1ra_ca199)
 
+#### Assessment of CA19-9 alone in Type 3c DM vs NOD
+## Type3cDM vs NOD
+t3c_nod_ca199_roc <- validation %>%
+  roc(t3c_nod, ca19_9_serum_u_ml_elisa)
+
+### AUC and 95% CI
+#auc(t3c_nod_ca199_roc)
+#ci.auc(t3c_nod_ca199_roc)
+
+## Type3c DM vs all DM
+t3c_dm_ca199_roc <- validation %>%
+  roc(t3c_dm, ca19_9_serum_u_ml_elisa)
+
+### AUC and 95% CI
+#auc(t3c_dm_ca199_roc)
+#ci.auc(t3c_dm_ca199_roc)
+
