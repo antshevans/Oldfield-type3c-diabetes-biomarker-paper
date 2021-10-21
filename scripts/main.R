@@ -224,9 +224,9 @@ t3c_dm_glm_adp_il1ra <- glm(t3c_dm ~ adiponectin_serum_ug_m_l +
         colour = NULL,
         x = "1 - Specificity",
         y = "Sensitivity") +
-   scale_colour_manual(labels = c("Adiponectin (0.76)", "IL-1Ra (0.79)", "Adiponectin + IL-1Ra (0.90)"),
+   scale_colour_manual(labels = c("Adiponectin (0.76)", "IL-1Ra (0.80)", "Adiponectin + IL-1Ra (0.90)"),
                        values = c("#F8766D", "#00BA38", "Blue")) +
-   scale_linetype_manual(labels = c("Adiponectin (0.76)", "IL-1Ra (0.79)", "Adiponectin + IL-1Ra (0.90)"),
+   scale_linetype_manual(labels = c("Adiponectin (0.76)", "IL-1Ra (0.80)", "Adiponectin + IL-1Ra (0.90)"),
                          values = c("solid", "longdash", "solid")
    )
  
@@ -285,9 +285,9 @@ roc_t3c_nod <- ggplot(t3c_nod_melt,
        colour = NULL,
        x = "1 - Specificity",
        y = "Sensitivity") +
-  scale_colour_manual(labels = c("Adiponectin (0.75)", "IL-1Ra (0.78)", "Adiponectin + IL-1Ra (0.91)"),
+  scale_colour_manual(labels = c("Adiponectin (0.75)", "IL-1Ra (0.80)", "Adiponectin + IL-1Ra (0.91)"),
                       values = c("#F8766D", "#00BA38", "Blue")) +
-  scale_linetype_manual(labels = c("Adiponectin (0.75)", "IL-1Ra (0.78)", "Adiponectin + IL-1Ra (0.91)"),
+  scale_linetype_manual(labels = c("Adiponectin (0.75)", "IL-1Ra (0.80)", "Adiponectin + IL-1Ra (0.91)"),
                         values = c("solid", "longdash", "solid")
   )
 
