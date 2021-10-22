@@ -304,12 +304,14 @@ validation <- validation %>%
 ## Calculate AUC of ROC curve for T3cDM vs NOD - Adiponectin + IL1-Ra
 roc_t3c_nod_adp_il1ra <- validation %>%
   roc(t3c_nod, t3c_nod_adp_il1ra_prob)
-auc(roc_t3c_nod_adp_il1ra)
+#auc(roc_t3c_nod_adp_il1ra)
+#ci.auc(roc_t3c_nod_adp_il1ra)
   
 ## Calculate AUC of ROC curve for T3cDM vs NOD - Adiponectin + IL1-Ra + CA19-9
 roc_t3c_nod_adp_il1ra_ca199 <- validation %>%
   roc(t3c_nod, t3c_nod_adp_il1ra_ca199_prob)
-auc(roc_t3c_nod_adp_il1ra_ca199)
+#auc(roc_t3c_nod_adp_il1ra_ca199)
+#ci.auc(roc_t3c_nod_adp_il1ra_ca199)
 
 #### Type3c DM vs all diabetes mellitus
 
@@ -430,11 +432,14 @@ validation <- validation %>%
 roc_t3c_dm_adp_il1ra <- validation %>%
   roc(t3c_dm, t3c_dm_adp_il1ra_prob)
 #auc(roc_t3c_dm_adp_il1ra)
+#ci.auc(roc_t3c_dm_adp_il1ra)
 
 ## Calculate AUC of ROC curve for T3cDM vs all DM - Adiponectin + IL1-Ra + CA19-9
 roc_t3c_dm_adp_il1ra_ca199 <- validation %>%
   roc(t3c_dm, t3c_dm_adp_il1ra_ca199_prob)
 #auc(roc_t3c_dm_adp_il1ra_ca199)
+#ci.auc(roc_t3c_dm_adp_il1ra_ca199)
+
 
 #### Assessment of CA19-9 alone in Type 3c DM vs NOD
 ## Type3cDM vs NOD
