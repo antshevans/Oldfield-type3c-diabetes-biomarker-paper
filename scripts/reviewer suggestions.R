@@ -393,6 +393,30 @@ sjPlot::tab_model(t3c_dm_glm_adp_il1ra, t3c_dm_glm_adp_il1ra_sex,
                   file = "output/model estimates/T3c DM vs all DM - IL1-Ra + Adiponectin + sex.html")
 
 ## Add predicted probabilities for each patient from IL1-Ra + adiponectin +
+## age + bmi models
+validation <- validation %>%
+  add_predictions(t3c_nod_glm_adp_il1ra_age_bmi, 
+                  var = "t3c_nod_adp_il1ra_age_bmi_prob",
+                  type = "response") %>%
+  add_predictions(t3c_dm_glm_adp_il1ra_age_bmi, 
+                  var = "t3c_dm_adp_il1ra_age_bmi_prob",
+                  type = "response")
+
+## Calculate AUC of ROC curve for T3cDM vs all DM - 
+## adiponectin + IL-1Ra + age + BMI
+roc_t3c_dm_adp_il1ra_age_bmi <- validation %>%
+  roc(t3c_dm, t3c_dm_adp_il1ra_age_bmi_prob)
+#auc(roc_t3c_dm_adp_il1ra_age_bmi)
+#ci.auc(roc_t3c_dm_adp_il1ra_age_bmi)
+
+## Calculate AUC of ROC curve for T3cDM vs NOD - 
+## adiponectin + IL-1Ra + age + BMI
+roc_t3c_nod_adp_il1ra_age_bmi <- validation %>%
+  roc(t3c_nod, t3c_nod_adp_il1ra_age_bmi_prob)
+#auc(roc_t3c_nod_adp_il1ra_age_bmi)
+#ci.auc(roc_t3c_nod_adp_il1ra_age_bmi)
+
+## Add predicted probabilities for each patient from IL1-Ra + adiponectin +
 ## CA19-9 models
 validation <- validation %>%
   add_predictions(t3c_dm_glm_adp_il1ra, 
@@ -405,12 +429,12 @@ validation <- validation %>%
 ## Calculate AUC of ROC curve for T3cDM vs all DM - Adiponectin + IL1-Ra
 roc_t3c_dm_adp_il1ra <- validation %>%
   roc(t3c_dm, t3c_dm_adp_il1ra_prob)
-auc(roc_t3c_dm_adp_il1ra)
+#auc(roc_t3c_dm_adp_il1ra)
 
 ## Calculate AUC of ROC curve for T3cDM vs all DM - Adiponectin + IL1-Ra + CA19-9
 roc_t3c_dm_adp_il1ra_ca199 <- validation %>%
   roc(t3c_dm, t3c_dm_adp_il1ra_ca199_prob)
-auc(roc_t3c_dm_adp_il1ra_ca199)
+#auc(roc_t3c_dm_adp_il1ra_ca199)
 
 #### Assessment of CA19-9 alone in Type 3c DM vs NOD
 ## Type3cDM vs NOD
