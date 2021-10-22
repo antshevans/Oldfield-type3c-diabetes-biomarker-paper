@@ -287,7 +287,7 @@ t3c_nod_glm_adp_il1ra_filt_bmi_age <- validation %>%
 sjPlot::tab_model(t3c_nod_glm_adp_il1ra, t3c_nod_glm_adp_il1ra_ca199,
                   file = "output/model estimates/T3c DM vs NOD - IL1-Ra + Adiponectin + CA19-9.html")
 sjPlot::tab_model(t3c_nod_glm_adp_il1ra_filt_bmi_age, t3c_nod_glm_adp_il1ra_age_bmi,
-                  file = "output/model estimates/T3c DM vs NOD - IL1-Ra + Adiponectin + age + BMI.html")
+                  file = "output/model estimates/Supplementary Table S4, T3c DM vs NOD - IL1-Ra + Adiponectin + age + BMI.html")
 sjPlot::tab_model(t3c_nod_glm_adp_il1ra, t3c_nod_glm_adp_il1ra_sex,
                   file = "output/model estimates/T3c DM vs NOD - IL1-Ra + Adiponectin + sex.html")
 
@@ -386,8 +386,8 @@ t3c_dm_glm_adp_il1ra_filt_bmi_age <- validation %>%
 sjPlot::tab_model(t3c_dm_glm_adp_il1ra, t3c_dm_glm_adp_il1ra_ca199,
           file = "output/model estimates/T3c DM vs all DM - IL1-Ra + Adiponectin + CA19-9.html")
           
-sjPlot::tab_model(t3c_dm_glm_adp_il1ra_age_bmi, t3c_dm_glm_adp_il1ra_filt_bmi_age,
-          file = "output/model estimates/T3c DM vs all DM - IL1-Ra + Adiponectin + age + BMI.html")
+sjPlot::tab_model(t3c_dm_glm_adp_il1ra_filt_bmi_age, t3c_dm_glm_adp_il1ra_age_bmi,
+          file = "output/model estimates/Supplementary Table S3, T3c DM vs all DM - IL1-Ra + Adiponectin + age + BMI.html")
 
 sjPlot::tab_model(t3c_dm_glm_adp_il1ra, t3c_dm_glm_adp_il1ra_sex,
                   file = "output/model estimates/T3c DM vs all DM - IL1-Ra + Adiponectin + sex.html")
