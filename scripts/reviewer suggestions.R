@@ -5,7 +5,8 @@ library(tidyverse)
 library(readxl)
 library(pROC)
 library(modelr)
-
+library(gt)
+library(corrplot)
 
 #### Data availability and import ####
 ## Data can be downloaded from https://doi.org/10.7910/DVN/9FMMJI
@@ -131,6 +132,109 @@ training_table3_auc <- training_long %>%
 write_csv(training_table3_auc,
           "output/roc statistics/table 3 ROC stats for training set.csv")
 
+### Add detailed labels for each biomarker
+training_table3_auc <- training_table3_auc %>%
+  mutate(
+    biomarker_labs = # Create labels for table headings
+      case_when(
+        biomarker == "adiponectin_serum_ug_ml" ~ "Adiponectin (\U00B5g/mL)",
+        biomarker == "adrenomedullin_plasma_ng_m_l" ~ "Adrenomedullin plasma (ng/mL)",
+        biomarker == "adrenomedullin_serum_ng_m_l" ~ "Adrenomedullin serum (ng/mL)",
+        biomarker == "aact_serum_ug_ml" ~ "AACT(\U00B5g/mL)",
+        biomarker == "apo_a1_serum_mg_d_l" ~ "Apo-A1 (mg/dL)",
+        biomarker == "ca19_9_serum_u_ml_elisa" ~ "CA19-9 (U/mL)",
+        biomarker == "chemerin_serum_ng_m_l" ~ "Chemerin (ng/mL)",
+        biomarker == "clusterin_serum_ng_m_l" ~ "Clusterin (ngmL)",
+        biomarker == "c_peptide_serum_pg_m_l" ~ "C-peptide (pg/mL)",
+        biomarker == "ghrelin_serum_pg_m_l" ~ "Ghrelin (pg/mL)",
+        biomarker == "gip_serum_pg_m_l" ~ "GIP (pg/mL)",
+        biomarker == "glp_1_serum_pg_m_l" ~ "GLP-1 (pg/mL)",
+        biomarker == "glucagon_serum_pg_m_l" ~ "Glucagon (pg/mL)",
+        biomarker == "ifn_g_plasma_pg_m_l" ~ "IFN-G (pg/mL)",
+        biomarker == "il_12_plasma_pg_m_l" ~ "IL-12 (pg/mL)",
+        biomarker == "il1ra_plasma_pg_ml" ~ "IL-1Ra (pg/mL)",
+        biomarker == "il_4_plasma_pg_m_l" ~ "IL-4 (pg/mL)",
+        biomarker == "il_6_plasma_pg_m_l" ~ "IL-6 (pg/mL)",
+        biomarker == "il_7_plasma_pg_m_l" ~ "IL-7 (pg/mL)",
+        biomarker == "il_8_plasma_pg_m_l" ~ "IL-8 (pg/mL)",
+        biomarker == "il_9_plasma_pg_m_l" ~ "IL-9 (pg/mL)",
+        biomarker == "insulin_serum_pg_m_l" ~ "Insulin serum (pg/mL)",
+        biomarker == "leptin_serum_pg_m_l" ~ "Leptin (pg/mL)",
+        biomarker == "mip_1a_plasma_pg_m_l" ~ "MIP-1A (pg/mL)",
+        biomarker == "mip_1b_plasma_pg_m_l" ~ "MIP-1B (pg/mL)",
+        biomarker == "pai_1_serum_pg_m_l" ~ "PAI-1 (pg/mL)",
+        biomarker == "pdgf_bb_plasma_pg_m_l" ~ "PDGF-BB (pg/mL)",
+        biomarker == "sparc_serum_ng_m_l" ~ "SPARC (ng/mL)",
+        biomarker == "transferin_serum_mg_m_l" ~ "Transferrin (mg/mL)",
+        biomarker == "tsp_1_serum_ug_m_l" ~ "TSP-1 (\U00B5g/mL)",
+        biomarker == "vwf_m_u_m_l" ~ "vWF (mU/mL)"
+      ),
+    pdac_pdacdm_auc_ci =
+      paste0(round(pdac_pdacdm_auc, 2), "\n(", round(pdac_pdacdm_lower_ci, 2), "-", round(pdac_pdacdm_upper_ci, 2), ")"),
+    pdacdm_lsdm_auc_ci =
+      paste0(round(pdacdm_lsdm_auc, 2), "\n(", round(pdacdm_lsdm_lower_ci, 2), "-", round(pdacdm_lsdm_upper_ci ,2), ")")
+  ) %>%
+  select(biomarker, biomarker_labs, everything()) %>%
+  arrange(biomarker_labs)
+
+### Create gt html/pdf tables for export to supplementary table
+training_table3_auc_gt <- training_table3_auc %>%
+  select(biomarker_labs, pdac_pdacdm_auc_ci, contains("pdac_pdacdm_sens"),
+         pdacdm_lsdm_auc_ci, contains("pdacdm_lsdm_sens")
+         ) %>%
+gt(rowname_col = "biomarker_labs") %>%
+  tab_spanner(
+    label = "PDAC vs PDAC-DM",
+    columns = contains("pdac_pdacdm")
+  ) %>%
+  tab_spanner(
+    label = "PDAC-DM vs LSDM",
+    columns = contains("pdacdm_lsdm")
+  ) %>%
+  cols_label(
+    pdac_pdacdm_auc_ci = "AUC (95% CI)",
+    pdac_pdacdm_sens_99_spec = "Sensitivity at 99% specificity",
+    pdac_pdacdm_sens_975_spec = "Sensitivity at 97.5% specificity",
+    pdac_pdacdm_sens_95_spec = "Sensitivity at 95% specificity",
+    pdac_pdacdm_sens_90_spec = "Sensitivity at 90% specificity",
+    pdacdm_lsdm_auc_ci = "AUC (95% CI)",
+    pdacdm_lsdm_sens_99_spec = "Sensitivity at 99% specificity",
+    pdacdm_lsdm_sens_975_spec = "Sensitivity at 97.5% specificity",
+    pdacdm_lsdm_sens_95_spec = "Sensitivity at 95% specificity",
+    pdacdm_lsdm_sens_90_spec = "Sensitivity at 90% specificity"
+  ) %>%
+  fmt_percent(
+    columns = contains("_sens"),
+    decimals = 1
+  ) %>%
+  tab_source_note(
+    md(
+      "**AUC**, Area under the curve; **PDAC**, pancreatic ductal adenocarcinoma; **PDAC-DM**, pancreatic cancer-associated diabetes; **LSDM**, long-standing diabetes (>3yr post-diagnosis of DM)"
+    )
+  ) %>%
+  tab_options(
+    table.font.names = c("Helvetica", "Arial"),
+    table.border.top.style = "hidden",
+    table.border.bottom.style = "hidden",
+  ) %>%
+  cols_width(
+    biomarker_labs ~ px(300),
+    contains("AUC") ~ px(150),
+    contains("_sens") ~ px(100)
+  ) %>%
+  tab_style(
+    style = "padding-left:10px;padding-right:10px;",
+    locations = list(cells_body(), cells_column_labels(), cells_column_spanners())
+  )
+
+gtsave(training_table3_auc_gt,
+       "output/roc statistics/Supplementary Table - table 3 ROC stats for training set.html"
+       )
+gtsave(training_table3_auc_gt,
+       "output/roc statistics/Supplementary Table - table 3 ROC stats for training set.pdf"
+       )
+
+
 ## Set 3 (validation)
 ### Create classifier variable based on PDAC-DM vs NOD
 
@@ -187,6 +291,87 @@ validation_table3_auc <- validation_long %>%
 ### Export as .csv file
 write_csv(validation_table3_auc,
           "output/roc statistics/table 3 ROC stats for validation set.csv")
+
+### Add detailed labels for each biomarker
+validation_table3_auc <-  validation_table3_auc %>%
+  mutate(
+    biomarker_labs = # Create labels for table headings
+      case_when(
+        biomarker == "adiponectin_serum_ug_ml" ~ "Adiponectin (\U00B5g/mL)",
+        biomarker == "ca19_9_serum_u_ml_elisa" ~ "CA19-9 (U/mL)",
+        biomarker == "c_peptide_serum_pg_m_l" ~ "C-peptide (pg/mL)",
+        biomarker == "ghrelin_serum_pg_m_l" ~ "Ghrelin (pg/mL)",
+        biomarker == "gip_serum_pg_m_l" ~ "GIP (pg/mL)",
+        biomarker == "glp_1_serum_pg_m_l" ~ "GLP-1 (pg/mL)",
+        biomarker == "glucagon_serum_pg_m_l" ~ "Glucagon (pg/mL)",
+        biomarker == "ifn_g_plasma_pg_m_l" ~ "IFN-G (pg/mL)",
+        biomarker == "il_12_plasma_pg_m_l" ~ "IL-12 (pg/mL)",
+        biomarker == "il1ra_plasma_pg_ml" ~ "IL-1Ra (pg/mL)",
+        biomarker == "il_4_plasma_pg_m_l" ~ "IL-4 (pg/mL)",
+        biomarker == "il_6_plasma_pg_m_l" ~ "IL-6 (pg/mL)",
+        biomarker == "il_8_plasma_pg_m_l" ~ "IL-8 (pg/mL)",
+        biomarker == "il_9_plasma_pg_m_l" ~ "IL-9 (pg/mL)",
+        biomarker == "insulin_serum_pg_m_l" ~ "Insulin (pg/mL)",
+        biomarker == "leptin_serum_pg_m_l" ~ "Leptin (pg/mL)",
+        biomarker == "mip_1a_plasma_pg_m_l" ~ "MIP-1A (pg/mL)",
+        biomarker == "mip_1b_plasma_pg_m_l" ~ "MIP-1B (pg/mL)",
+        biomarker == "pai_1_serum_pg_m_l" ~ "PAI-1 (pg/mL)",
+        biomarker == "pdgf_bb_plasma_pg_m_l" ~ "PDGF-BB (pg/mL)",
+        biomarker == "rantes_plasma_pg_m_l" ~ "RANTES (pg/mL)"
+      ),
+    pdacdm_nod_auc_ci =
+      paste0(round(pdacdm_nod_auc, 2), "\n(", round(pdacdm_nod_auc_lower_ci, 2), "-", round(pdacdm_nod_auc_upper_ci, 2), ")")
+    ) %>%
+  select(biomarker, biomarker_labs, everything()) %>%
+  arrange(biomarker_labs)
+
+### Create gt html/pdf tables for export to supplementary table
+validation_table3_auc_gt <- validation_table3_auc %>%
+  select(
+    biomarker_labs, pdacdm_nod_auc_ci, contains("pdacdm_nod_sens")
+  ) %>%
+  gt(rowname_col = "biomarker_labs") %>%
+  tab_spanner(
+    label = "PDAC-DM vs NOD",
+    columns = contains("pdacdm_nod")
+  ) %>%
+  cols_label(
+    pdacdm_nod_auc_ci = "AUC (95% CI)",
+    pdacdm_nod_sens_99_spec = "Sensitivity at 99% specificity",
+    pdacdm_nod_sens_975_spec = "Sensitivity at 97.5% specificity",
+    pdacdm_nod_sens_95_spec = "Sensitivity at 95% specificity",
+    pdacdm_nod_sens_90_spec = "Sensitivity at 90% specificity"
+    ) %>%
+  fmt_percent(
+    columns = contains("_sens"),
+    decimals = 1
+  ) %>%
+  tab_source_note(
+    md(
+      "**AUC**, Area under the curve; **PDAC-DM**, pancreatic cancer-associated diabetes; **NOD**, new-onset diabetes (<3yr post-diagnosis of DM)"
+    )
+  ) %>%
+  tab_options(
+    table.font.names = c("Helvetica", "Arial"),
+    table.border.top.style = "hidden",
+    table.border.bottom.style = "hidden",
+  ) %>%
+  cols_width(
+    biomarker_labs ~ px(220),
+    contains("AUC") ~ px(150),
+    contains("_sens") ~ px(120)
+  ) %>%
+  tab_style(
+    style = "padding-left:10px;padding-right:10px;",
+    locations = list(cells_body(), cells_column_labels(), cells_column_spanners())
+  )
+
+gtsave(validation_table3_auc_gt,
+       "output/roc statistics/Supplementary Table - table 3 ROC stats for validation set.html"
+)
+gtsave(validation_table3_auc_gt,
+       "output/roc statistics/Supplementary Table - table 3 ROC stats for validation set.pdf"
+)
 
 #### Correlation of adiponectin and age/BMI in Set 3 (validation) within disease group ####
 
@@ -458,3 +643,95 @@ t3c_dm_ca199_roc <- validation %>%
 #auc(t3c_dm_ca199_roc)
 #ci.auc(t3c_dm_ca199_roc)
 
+#### Correlation matrices of all markers ####
+
+#### Training set
+training_spearman <- training %>%
+  rename(
+    "Adiponectin (\U00B5g/mL)" = "adiponectin_serum_ug_ml",
+    "Adrenomedullin plasma (ng/mL)" = "adrenomedullin_plasma_ng_m_l",
+    "Adrenomedullin serum (ng/mL)" = "adrenomedullin_serum_ng_m_l",
+    "AACT(\U00B5g/mL)" = "aact_serum_ug_ml",
+    "Apo-A1 (mg/dL)" = "apo_a1_serum_mg_d_l",
+    "CA19-9 (U/mL)" = "ca19_9_serum_u_ml_elisa",
+    "Chemerin (ng/mL)" = "chemerin_serum_ng_m_l",
+    "Clusterin (ngmL)" = "clusterin_serum_ng_m_l",
+    "C-peptide (pg/mL)" = "c_peptide_serum_pg_m_l",
+    "Ghrelin (pg/mL)" = "ghrelin_serum_pg_m_l",
+    "GIP (pg/mL)" = "gip_serum_pg_m_l",
+    "GLP-1 (pg/mL)" = "glp_1_serum_pg_m_l",
+    "Glucagon (pg/mL)" = "glucagon_serum_pg_m_l",
+    "IFN-G (pg/mL)" = "ifn_g_plasma_pg_m_l",
+    "IL-12 (pg/mL)" = "il_12_plasma_pg_m_l",
+    "IL-1Ra (pg/mL)" = "il1ra_plasma_pg_ml",
+    "IL-4 (pg/mL)" = "il_4_plasma_pg_m_l",
+    "IL-6 (pg/mL)" = "il_6_plasma_pg_m_l",
+    "IL-7 (pg/mL)" = "il_7_plasma_pg_m_l",
+    "IL-8 (pg/mL)" = "il_8_plasma_pg_m_l",
+    "IL-9 (pg/mL)" = "il_9_plasma_pg_m_l",
+    "Insulin serum (pg/mL)" = "insulin_serum_pg_m_l",
+    "Leptin (pg/mL)" = "leptin_serum_pg_m_l",
+    "MIP-1A (pg/mL)" = "mip_1a_plasma_pg_m_l",
+    "MIP-1B (pg/mL)" = "mip_1b_plasma_pg_m_l",
+    "PAI-1 (pg/mL)" = "pai_1_serum_pg_m_l",
+    "PDGF-BB (pg/mL)" = "pdgf_bb_plasma_pg_m_l",
+    "SPARC (ng/mL)" = "sparc_serum_ng_m_l",
+    "Transferrin (mg/mL)" = "transferin_serum_mg_m_l",
+    "vWF (mU/mL)" = "vwf_m_u_m_l"
+  ) %>%
+  select(contains(c("mL", "dL"))) %>%
+  cor(use = "complete.obs",
+      method = "spearman")
+
+### Create correlation matrix using Spearman's rank method
+pdf(file = "output/figures/supplementary figure X - spearman's correlation matrix of all training markers.pdf")
+corrplot(training_spearman,
+         method = "square",
+         type = "lower",
+         tl.col = "black",
+         tl.cex = 0.7,
+         tl.offset = 0.4,
+         addCoef.col = "black",
+         number.cex = 0.3)
+dev.off()
+
+#### Validation set
+validation_spearman <- validation %>%
+  rename(
+    "Adiponectin (\U00B5g/mL)" = "adiponectin_serum_ug_ml",
+    "CA19-9 (U/mL)" = "ca19_9_serum_u_ml_elisa",
+    "C-peptide (pg/mL)" = "c_peptide_serum_pg_m_l",
+    "Ghrelin (pg/mL)" = "ghrelin_serum_pg_m_l",
+    "GIP (pg/mL)" = "gip_serum_pg_m_l",
+    "GLP-1 (pg/mL)" = "glp_1_serum_pg_m_l",
+    "Glucagon (pg/mL)" = "glucagon_serum_pg_m_l",
+    "IFN-G (pg/mL)" = "ifn_g_plasma_pg_m_l",
+    "IL-12 (pg/mL)" = "il_12_plasma_pg_m_l",
+    "IL-1Ra (pg/mL)" = "il1ra_plasma_pg_ml",
+    "IL-4 (pg/mL)" = "il_4_plasma_pg_m_l",
+    "IL-6 (pg/mL)" = "il_6_plasma_pg_m_l",
+    "IL-8 (pg/mL)" = "il_8_plasma_pg_m_l",
+    "IL-9 (pg/mL)" = "il_9_plasma_pg_m_l",
+    "Insulin (pg/mL)" = "insulin_serum_pg_m_l",
+    "Leptin (pg/mL)" = "leptin_serum_pg_m_l",
+    "MIP-1A (pg/mL)" = "mip_1a_plasma_pg_m_l",
+    "MIP-1B (pg/mL)" = "mip_1b_plasma_pg_m_l",
+    "PAI-1 (pg/mL)" = "pai_1_serum_pg_m_l",
+    "PDGF-BB (pg/mL)" = "pdgf_bb_plasma_pg_m_l",
+    "RANTES (pg/mL)" = "rantes_plasma_pg_m_l"
+    ) %>%
+  select(contains("mL")) %>%
+  cor(use = "complete.obs",
+      method = "spearman")
+
+### Create correlation matrix using Spearman's rank method
+pdf(file = "output/figures/supplementary figure X - spearman's correlation matrix of all validation markers.pdf")
+corrplot(validation_spearman,
+         method = "square",
+         type = "lower",
+         tl.col = "black",
+         tl.cex = 0.7,
+         tl.offset = 0.4,
+         addCoef.col = "black",
+         number.cex = 0.5)
+dev.off()
