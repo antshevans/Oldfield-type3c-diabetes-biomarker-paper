@@ -140,7 +140,7 @@ training_table3_auc <- training_table3_auc %>%
         biomarker == "adiponectin_serum_ug_ml" ~ "Adiponectin (\U00B5g/mL)",
         biomarker == "adrenomedullin_plasma_ng_m_l" ~ "Adrenomedullin plasma (ng/mL)",
         biomarker == "adrenomedullin_serum_ng_m_l" ~ "Adrenomedullin serum (ng/mL)",
-        biomarker == "aact_serum_ug_ml" ~ "AACT(\U00B5g/mL)",
+        biomarker == "aact_serum_ug_ml" ~ "AACT (\U00B5g/mL)",
         biomarker == "apo_a1_serum_mg_d_l" ~ "Apo-A1 (mg/dL)",
         biomarker == "ca19_9_serum_u_ml_elisa" ~ "CA19-9 (U/mL)",
         biomarker == "chemerin_serum_ng_m_l" ~ "Chemerin (ng/mL)",
@@ -158,7 +158,7 @@ training_table3_auc <- training_table3_auc %>%
         biomarker == "il_7_plasma_pg_m_l" ~ "IL-7 (pg/mL)",
         biomarker == "il_8_plasma_pg_m_l" ~ "IL-8 (pg/mL)",
         biomarker == "il_9_plasma_pg_m_l" ~ "IL-9 (pg/mL)",
-        biomarker == "insulin_serum_pg_m_l" ~ "Insulin serum (pg/mL)",
+        biomarker == "insulin_serum_pg_m_l" ~ "Insulin (pg/mL)",
         biomarker == "leptin_serum_pg_m_l" ~ "Leptin (pg/mL)",
         biomarker == "mip_1a_plasma_pg_m_l" ~ "MIP-1A (pg/mL)",
         biomarker == "mip_1b_plasma_pg_m_l" ~ "MIP-1B (pg/mL)",
@@ -219,9 +219,6 @@ gt(rowname_col = "biomarker_labs") %>%
     locations = list(cells_body(), cells_column_labels(), cells_column_spanners())
   )
 
-gtsave(training_table3_auc_gt,
-       "output/roc statistics/Supplementary Table S4 - table 3 ROC stats for training set.html"
-       )
 gtsave(training_table3_auc_gt,
        "output/roc statistics/Supplementary Table S4 - table 3 ROC stats for training set.pdf"
        )
@@ -359,9 +356,6 @@ validation_table3_auc_gt <- validation_table3_auc %>%
     locations = list(cells_body(), cells_column_labels(), cells_column_spanners())
   )
 
-gtsave(validation_table3_auc_gt,
-       "output/roc statistics/Supplementary Table S5 - table 3 ROC stats for validation set.html"
-)
 gtsave(validation_table3_auc_gt,
        "output/roc statistics/Supplementary Table S5 - table 3 ROC stats for validation set.pdf"
 )
@@ -644,7 +638,7 @@ training_spearman <- training %>%
     "Adiponectin (\U00B5g/mL)" = "adiponectin_serum_ug_ml",
     "Adrenomedullin plasma (ng/mL)" = "adrenomedullin_plasma_ng_m_l",
     "Adrenomedullin serum (ng/mL)" = "adrenomedullin_serum_ng_m_l",
-    "AACT(\U00B5g/mL)" = "aact_serum_ug_ml",
+    "AACT (\U00B5g/mL)" = "aact_serum_ug_ml",
     "Apo-A1 (mg/dL)" = "apo_a1_serum_mg_d_l",
     "CA19-9 (U/mL)" = "ca19_9_serum_u_ml_elisa",
     "Chemerin (ng/mL)" = "chemerin_serum_ng_m_l",
@@ -662,7 +656,7 @@ training_spearman <- training %>%
     "IL-7 (pg/mL)" = "il_7_plasma_pg_m_l",
     "IL-8 (pg/mL)" = "il_8_plasma_pg_m_l",
     "IL-9 (pg/mL)" = "il_9_plasma_pg_m_l",
-    "Insulin serum (pg/mL)" = "insulin_serum_pg_m_l",
+    "Insulin (pg/mL)" = "insulin_serum_pg_m_l",
     "Leptin (pg/mL)" = "leptin_serum_pg_m_l",
     "MIP-1A (pg/mL)" = "mip_1a_plasma_pg_m_l",
     "MIP-1B (pg/mL)" = "mip_1b_plasma_pg_m_l",
@@ -677,7 +671,7 @@ training_spearman <- training %>%
       method = "spearman")
 
 ### Create correlation matrix using Spearman's rank method
-pdf(file = "output/figures/supplementary figure X - spearman's correlation matrix of all training markers.pdf")
+pdf(file = "output/figures/supplementary figure 3a - spearman's correlation matrix of all training markers.pdf")
 corrplot(training_spearman,
          method = "square",
          type = "lower",
@@ -718,7 +712,7 @@ validation_spearman <- validation %>%
       method = "spearman")
 
 ### Create correlation matrix using Spearman's rank method
-pdf(file = "output/figures/supplementary figure X - spearman's correlation matrix of all validation markers.pdf")
+pdf(file = "output/figures/supplementary figure 3b - spearman's correlation matrix of all validation markers.pdf")
 corrplot(validation_spearman,
          method = "square",
          type = "lower",
