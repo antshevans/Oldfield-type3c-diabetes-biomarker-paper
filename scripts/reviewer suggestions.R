@@ -179,24 +179,16 @@ training_table3_auc <- training_table3_auc %>%
 
 ### Create gt html/pdf tables for export to supplementary table
 training_table3_auc_gt <- training_table3_auc %>%
-  select(biomarker_labs, pdac_pdacdm_auc_ci, contains("pdac_pdacdm_sens"),
-         pdacdm_lsdm_auc_ci, contains("pdacdm_lsdm_sens")
+  select(biomarker_labs,
+         pdacdm_lsdm_auc_ci,
+         contains("pdacdm_lsdm_sens")
          ) %>%
 gt(rowname_col = "biomarker_labs") %>%
-  tab_spanner(
-    label = "PDAC vs PDAC-DM",
-    columns = contains("pdac_pdacdm")
-  ) %>%
   tab_spanner(
     label = "PDAC-DM vs LSDM",
     columns = contains("pdacdm_lsdm")
   ) %>%
   cols_label(
-    pdac_pdacdm_auc_ci = "AUC (95% CI)",
-    pdac_pdacdm_sens_99_spec = "Sensitivity at 99% specificity",
-    pdac_pdacdm_sens_975_spec = "Sensitivity at 97.5% specificity",
-    pdac_pdacdm_sens_95_spec = "Sensitivity at 95% specificity",
-    pdac_pdacdm_sens_90_spec = "Sensitivity at 90% specificity",
     pdacdm_lsdm_auc_ci = "AUC (95% CI)",
     pdacdm_lsdm_sens_99_spec = "Sensitivity at 99% specificity",
     pdacdm_lsdm_sens_975_spec = "Sensitivity at 97.5% specificity",
@@ -209,7 +201,7 @@ gt(rowname_col = "biomarker_labs") %>%
   ) %>%
   tab_source_note(
     md(
-      "**AUC**, Area under the curve; **PDAC**, pancreatic ductal adenocarcinoma; **PDAC-DM**, pancreatic cancer-associated diabetes; **LSDM**, long-standing diabetes (>3yr post-diagnosis of DM)"
+      "**AUC**, Area under the curve; **PDAC-DM**, pancreatic cancer-associated diabetes; **LSDM**, long-standing diabetes (>3yr post-diagnosis of DM)"
     )
   ) %>%
   tab_options(
@@ -228,10 +220,10 @@ gt(rowname_col = "biomarker_labs") %>%
   )
 
 gtsave(training_table3_auc_gt,
-       "output/roc statistics/Supplementary Table - table 3 ROC stats for training set.html"
+       "output/roc statistics/Supplementary Table S4 - table 3 ROC stats for training set.html"
        )
 gtsave(training_table3_auc_gt,
-       "output/roc statistics/Supplementary Table - table 3 ROC stats for training set.pdf"
+       "output/roc statistics/Supplementary Table S4 - table 3 ROC stats for training set.pdf"
        )
 
 
@@ -317,7 +309,8 @@ validation_table3_auc <-  validation_table3_auc %>%
         biomarker == "mip_1b_plasma_pg_m_l" ~ "MIP-1B (pg/mL)",
         biomarker == "pai_1_serum_pg_m_l" ~ "PAI-1 (pg/mL)",
         biomarker == "pdgf_bb_plasma_pg_m_l" ~ "PDGF-BB (pg/mL)",
-        biomarker == "rantes_plasma_pg_m_l" ~ "RANTES (pg/mL)"
+        biomarker == "rantes_plasma_pg_m_l" ~ "RANTES (pg/mL)",
+        biomarker == "tsp_1_serum_mg_m_l" ~ "TSP-1 (\U00B5g/mL)"
       ),
     pdacdm_nod_auc_ci =
       paste0(round(pdacdm_nod_auc, 2), "\n(", round(pdacdm_nod_auc_lower_ci, 2), "-", round(pdacdm_nod_auc_upper_ci, 2), ")")
@@ -367,10 +360,10 @@ validation_table3_auc_gt <- validation_table3_auc %>%
   )
 
 gtsave(validation_table3_auc_gt,
-       "output/roc statistics/Supplementary Table - table 3 ROC stats for validation set.html"
+       "output/roc statistics/Supplementary Table S5 - table 3 ROC stats for validation set.html"
 )
 gtsave(validation_table3_auc_gt,
-       "output/roc statistics/Supplementary Table - table 3 ROC stats for validation set.pdf"
+       "output/roc statistics/Supplementary Table S5 - table 3 ROC stats for validation set.pdf"
 )
 
 #### Correlation of adiponectin and age/BMI in Set 3 (validation) within disease group ####
@@ -472,7 +465,7 @@ t3c_nod_glm_adp_il1ra_filt_bmi_age <- validation %>%
 sjPlot::tab_model(t3c_nod_glm_adp_il1ra, t3c_nod_glm_adp_il1ra_ca199,
                   file = "output/model estimates/T3c DM vs NOD - IL1-Ra + Adiponectin + CA19-9.html")
 sjPlot::tab_model(t3c_nod_glm_adp_il1ra_filt_bmi_age, t3c_nod_glm_adp_il1ra_age_bmi,
-                  file = "output/model estimates/Supplementary Table S5, T3c DM vs NOD - IL1-Ra + Adiponectin + age + BMI.html")
+                  file = "output/model estimates/Supplementary Table S7, T3c DM vs NOD - IL1-Ra + Adiponectin + age + BMI.html")
 sjPlot::tab_model(t3c_nod_glm_adp_il1ra, t3c_nod_glm_adp_il1ra_sex,
                   file = "output/model estimates/T3c DM vs NOD - IL1-Ra + Adiponectin + sex.html")
 
@@ -574,7 +567,7 @@ sjPlot::tab_model(t3c_dm_glm_adp_il1ra, t3c_dm_glm_adp_il1ra_ca199,
           file = "output/model estimates/T3c DM vs all DM - IL1-Ra + Adiponectin + CA19-9.html")
           
 sjPlot::tab_model(t3c_dm_glm_adp_il1ra_filt_bmi_age, t3c_dm_glm_adp_il1ra_age_bmi,
-          file = "output/model estimates/Supplementary Table S4, T3c DM vs all DM - IL1-Ra + Adiponectin + age + BMI.html")
+          file = "output/model estimates/Supplementary Table S6, T3c DM vs all DM - IL1-Ra + Adiponectin + age + BMI.html")
 
 sjPlot::tab_model(t3c_dm_glm_adp_il1ra, t3c_dm_glm_adp_il1ra_sex,
                   file = "output/model estimates/T3c DM vs all DM - IL1-Ra + Adiponectin + sex.html")
